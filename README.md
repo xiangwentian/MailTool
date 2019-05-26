@@ -27,4 +27,4 @@ MailTool
 5、应用截图  
 ![数据html报表](https://github.com/xiangwentian/MailTool/blob/master/src/test/toolPic/mail1.png)  
 
-![数据报表数据异常时发送告警邮件](https://github.com/xiangwentian/MailTool/blob/master/src/test/toolPic/%E5%91%8A%E8%AD%A6.png）
+![数据html报表](https://github.com/xiangwentian/MailTool/blob/master/src/test/toolPic/fail.png)  
