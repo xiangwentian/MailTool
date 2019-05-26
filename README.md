@@ -25,3 +25,5 @@ MailTool
 或通过Maven打包执行 java -Dfile.encoding=utf-8 -jar MailTool-1.0-SNAPSHOT.jar
 避免中文乱码请执行jar时加上-Dfile.encoding=utf-8
 5、应用截图
+https://github.com/xiangwentian/MailTool/blob/master/src/test/toolPic/mail1.png
+https://github.com/xiangwentian/MailTool/blob/master/src/test/toolPic/%E5%91%8A%E8%AD%A6.png
