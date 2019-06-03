@@ -121,7 +121,17 @@ public class DataProcessTool {
     }
 
     public static String hasLHBList2Html(String titleName, Map<String, Object> hasLHBData) {
-        int lhbLine = Integer.valueOf(hasLHBData.get("LHB") != null ? hasLHBData.get("LHB").toString() : "");
+//        int lhbLine = Integer.valueOf(hasLHBData.get("LHB") != null ? hasLHBData.get("LHB").toString() : "");
+        int lhbLine = Integer.valueOf(hasLHBData.get("LHB") != null ? hasLHBData.get("LHB").toString().split(",")[0] : "");
+        String mergeNums = hasLHBData.get("LHB") != null ? hasLHBData.get("LHB").toString() : "";
+        String[] mergeNum = hasLHBData.get("LHB").toString().split(",");
+        String mergeStr = "";
+        for (int i = 0; i < mergeNum.length; i++) {
+            if (!mergeNum[i].equals(String.valueOf(lhbLine))) {
+                mergeStr += mergeNum[i] + ",";
+            }
+        }
+        System.out.println(mergeStr);
 
         List lhbData = hasLHBData.get("data") != null ? (List) hasLHBData.get("data") : null;//lhbData是要分组的数据
         if (lhbData == null) {
@@ -154,22 +164,22 @@ public class DataProcessTool {
                         //当有一条记录时直接把数据放到一个tr td中即可
                         String td = "";
                         for (int j = 0; j < totalLine; j++) {
-                            td += "<td style='white-space: nowrap;'  rowspan='" + totalLine + "'>" + (StringUtils.isNotEmpty(groupData.get(i)[j]) ? groupData.get(i)[j] : "") + "</td>";
+                            td += "<td style='white-space: nowrap;'  rowspan='" + totalLine + "'>" + (StringUtils.isNotEmpty(groupData.get(i)[j]) ? (j == lhbLine ? groupData.get(i)[j].split("_LHB")[0] : groupData.get(i)[j]) : "") + "</td>";
                         }
                         contextData += "<tr " + (i % 2 != 0 ? "style='background: #dce6f1;'" : "style=''") + ">" + td + "</tr>";//dataArray有多少个参数就有多少个td
 
                     } else {
                         String td = "";
                         for (int j = 0; j < totalLine; j++) {
-                            td += "<td style='white-space: nowrap;' >" + (StringUtils.isNotEmpty(groupData.get(0)[j]) ? groupData.get(0)[j] : "") + "</td>";
+                            td += "<td style='white-space: nowrap;' >" + (StringUtils.isNotEmpty(groupData.get(0)[j]) ? (j == lhbLine ? groupData.get(0)[j].split("_LHB")[0] : groupData.get(0)[j]) : "") + "</td>";
                         }
                         contextData += "<tr " + (i % 2 != 0 ? "style='background: #dce6f1;'" : "style=''") + ">" + td + "</tr>";//dataArray有多少个参数就有多少个td
                     }
                 }
             } else {
                 //多条数据要合并单元格时，做相应的处理
-                if (groupData.size() > 1) {//当分组的列表大于1条数据时
-                    contextData += processTrTd((List<String[]>) groupData, totalLine, lhbLine, i);
+                if (groupData.size() >= 1) {//当分组的列表大于1条数据时
+                    contextData += processTrTd((List<String[]>) groupData, totalLine, lhbLine, i, mergeStr);
                 }
             }
         }
@@ -194,6 +204,40 @@ public class DataProcessTool {
      * @param lhbLine  第几行需要分组
      * @return
      */
+    private static String processTrTd(List<String[]> dataList, int dataSize, int lhbLine, int currentGroup, String mergeStr) {
+
+        //判断除了lhbLine要合并还有哪个列需要
+        //TODO
+
+        String contextData = "";
+        for (int i = 0; i < dataList.size(); i++) {
+            String td = "";
+            for (int j = 0; j < dataSize; j++) {
+                if (i == 0 && j == lhbLine) {
+                    //判断是当前数据的第一项参数
+                    td += "<td style='white-space: nowrap;'" + (i == 0 ? "rowspan=" + dataList.size() : "rowspan=1") + ">" + (j == lhbLine ? dataList.get(i)[j].split("_LHB")[0] : (StringUtils.isNotEmpty(dataList.get(i)[j]) ? dataList.get(i)[j] : "")) + "</td>";
+                } else if (i == 0 && mergeStr.contains(String.valueOf(j))) {
+                    td += "<td style='white-space: nowrap;'" + (mergeStr.contains(String.valueOf(j)) ? "rowspan=" + dataList.size() : "rowspan=1") + ">" + (mergeStr.contains(String.valueOf(j)) ? dataList.get(i)[j].split("_LHB")[0] : (StringUtils.isNotEmpty(dataList.get(i)[j]) ? dataList.get(i)[j] : "")) + "</td>";
+                } else if (i != 0 && (j == lhbLine || mergeStr.contains(String.valueOf(j)))) {
+                    //什么也不处理，留空该列
+                } else {
+                    td += "<td style='white-space: nowrap;'>" + ((j == lhbLine) || (mergeStr.contains(String.valueOf(j))) ? dataList.get(i)[j].split("_LHB")[0] : (StringUtils.isNotEmpty(dataList.get(i)[j]) ? dataList.get(i)[j] : "")) + "</td>";
+
+                }
+            }
+            contextData += "<tr " + (currentGroup % 2 != 0 ? "style='background: #dce6f1;'" : "style=''") + ">" + td + "</tr>";//dataArray有多少个参数就有多少个td
+        }
+        return contextData;
+    }
+
+    /**
+     * 处理tr/td
+     *
+     * @param dataList 要遍历的对象
+     * @param dataSize 一共多少条数据
+     * @param lhbLine  第几行需要分组
+     * @return
+     */
     private static String processTrTd(List<String[]> dataList, int dataSize, int lhbLine, int currentGroup) {
         String contextData = "";
         for (int i = 0; i < dataList.size(); i++) {
@@ -201,7 +245,7 @@ public class DataProcessTool {
             for (int j = 0; j < dataSize; j++) {
                 if (i == 0 && j == lhbLine) {
                     //判断是当前数据的第一项参数
-                    td += "<td style='white-space: nowrap;'" + (i == 0 ? "rowspan=" + dataList.size() : "rowspan=1") + ">" + (j == lhbLine ? dataList.get(i)[j].split("_LHB")[0] : dataList.get(i)[j]) + "</td>";
+                    td += "<td style='white-space: nowrap;'" + (i == 0 ? "rowspan=" + dataList.size() : "rowspan=1") + ">" + (j == lhbLine ? dataList.get(i)[j].split("_LHB")[0] : (StringUtils.isNotEmpty(dataList.get(i)[j]) ? dataList.get(i)[j] : "")) + "</td>";
                 } else if (i != 0 && j == lhbLine) {
                     //什么也不处理，留空该列
                 } else {
@@ -287,7 +331,7 @@ public class DataProcessTool {
      */
     public static Map<String, Object> parse_LHB(List list) {
 
-        int witchLineNeedMerge = -1;
+        String witchLineNeedMerge = "";
 
         List dataMap = new ArrayList();
 
@@ -300,8 +344,8 @@ public class DataProcessTool {
             if (JSON.toJSONString(dataArray).contains("_LHB")) {
                 for (int j = 0; j < dataArray.length; j++) {
                     if (dataArray[j].contains("_LHB")) {
-                        witchLineNeedMerge = j;
-                        break;
+                        witchLineNeedMerge += j + ",";
+                        continue;
                     }
                 }
             }
@@ -328,13 +372,14 @@ public class DataProcessTool {
 
             List<String[]> sameLine = new ArrayList<String[]>();
             sameLine.add(dataArray);
-            if (witchLineNeedMerge == -1) {
+            if (witchLineNeedMerge == "") {
                 //没有要合并的项
                 sameLine.add(dataArray);
                 dataMap.add(sameLine);
                 ++num;
                 break;
             } else {
+                int witchLineNeedNum = Integer.valueOf(witchLineNeedMerge.split(",")[0]);
                 if (num + 1 != list.size()) {
 
                     for (int j = num + 1; j < list.size(); j++) {
@@ -344,7 +389,7 @@ public class DataProcessTool {
                         String[] dataArrayNext = dataStrNext.split(",");
 
 
-                        if (dataArray[witchLineNeedMerge].equals(dataArrayNext[witchLineNeedMerge])) {
+                        if (dataArray[witchLineNeedNum].equals(dataArrayNext[witchLineNeedNum])) {
                             //当带_LHB的witchLineNeedMerge值不为0时，并且下一个值相等
                             sameLine.add(dataArrayNext);
                             if (j + 1 == list.size()) {

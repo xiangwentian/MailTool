@@ -11,6 +11,11 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="cjs-oauth2-code-client" target="1.8" />
+      <module name="cjs-oauth2-code-server" target="1.8" />
+      <module name="cjs-oauth2-sso-auth-server" target="1.8" />
+      <module name="cjs-oauth2-sso-ui" target="1.8" />
+      <module name="cjs-oauth2-sso-ui2" target="1.8" />
       <module name="GaoYangMail" target="1.7" />
       <module name="MailTool" target="1.7" />
     </bytecodeTargetLevel>
