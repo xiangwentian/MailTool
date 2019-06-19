@@ -28,3 +28,9 @@ MailTool
 ![数据html报表](https://github.com/xiangwentian/MailTool/blob/master/toolPic/mail1.png)  
 
 ![数据html报表](https://github.com/xiangwentian/MailTool/blob/master/toolPic/fail.png)  
+
+
+更新日志：
+
+2019-6-19
+DataProcessTool类175行，优化支持多列单元格合并，如果：原逻辑只支持第1列需要合并，后面要其它如第2、第3列要合并时不支持，本次优化已支持该合并
