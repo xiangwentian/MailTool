@@ -171,7 +171,8 @@ public class DataProcessTool {
                     } else {
                         String td = "";
                         for (int j = 0; j < totalLine; j++) {
-                            td += "<td style='white-space: nowrap;' >" + (StringUtils.isNotEmpty(groupData.get(0)[j]) ? (j == lhbLine ? groupData.get(0)[j].split("_LHB")[0] : groupData.get(0)[j]) : "") + "</td>";
+                            //td += "<td style='white-space: nowrap;' >" + (StringUtils.isNotEmpty(groupData.get(0)[j]) ? (j == lhbLine ? groupData.get(0)[j].split("_LHB")[0] : groupData.get(0)[j]) : "") + "</td>";
+							td += "<td style='white-space: nowrap;' >" + (StringUtils.isNotEmpty(groupData.get(0)[j]) ? (mergeNums.contains(String.valueOf(j)) ? groupData.get(0)[j].split("_LHB")[0] : groupData.get(0)[j]) : "") + "</td>";
                         }
                         contextData += "<tr " + (i % 2 != 0 ? "style='background: #dce6f1;'" : "style=''") + ">" + td + "</tr>";//dataArray有多少个参数就有多少个td
                     }
